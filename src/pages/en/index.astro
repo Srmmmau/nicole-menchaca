@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/components/layout/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Hero from '@/components/sections/Hero.astro';
+import Work from '@/components/sections/Work.astro';
+import About from '@/components/sections/About.astro';
+import Clients from '@/components/sections/Clients.astro';
+import Contact from '@/components/sections/Contact.astro';
+import { copyByLang } from '@/content';
+
+const c = copyByLang.en;
+---
+
+<BaseLayout lang="en" title={c.meta.title} description={c.meta.description}>
+  <Header lang="en" copy={c} />
+  <main>
+    <Hero copy={c} />
+    <Work copy={c} />
+    <About copy={c} />
+    <Clients copy={c} />
+    <Contact copy={c} />
+  </main>
+  <Footer copy={c} />
+</BaseLayout>

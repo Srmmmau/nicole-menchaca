@@ -1,0 +1,57 @@
+---
+import '@/styles/globals.css';
+import type { Lang } from '@/lib/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL;
+const canonical = new URL(Astro.url.pathname, siteUrl).toString();
+
+// Two lockups of the same approved brand system (dark on ES, light on EN) —
+// shown side by side to the client so she can pick a direction.
+const theme = lang === 'en' ? 'light' : 'dark';
+---
+
+<!doctype html>
+<html lang={lang} data-theme={theme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content={theme} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="es" href={new URL('/es/', siteUrl).toString()} />
+    <link rel="alternate" hreflang="en" href={new URL('/en/', siteUrl).toString()} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/es/', siteUrl).toString()} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Nicole Menchaca',
+      jobTitle: 'Photographer',
+      url: siteUrl,
+      worksFor: {
+        '@type': 'Organization',
+        name: 'MOM Agency',
+        url: 'https://momagency.mx',
+      },
+      sameAs: ['https://instagram.com/niqolemv'],
+    })} />
+  </head>
+  <body class="font-body antialiased">
+    <slot />
+  </body>
+</html>

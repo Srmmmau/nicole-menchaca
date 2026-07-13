@@ -1,0 +1,72 @@
+---
+import Logo from '@/components/ui/Logo.astro';
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.astro';
+import type { SiteCopy } from '@/content/types';
+import type { Lang } from '@/lib/i18n';
+
+interface Props {
+  lang: Lang;
+  copy: SiteCopy;
+}
+
+const { lang, copy } = Astro.props;
+
+const links = [
+  { href: '#trabajo', label: copy.nav.work },
+  { href: '#sobre-mi', label: copy.nav.about },
+  { href: '#clientes', label: copy.nav.clients },
+  { href: '#contacto', label: copy.nav.contact },
+];
+---
+
+<header class="sticky top-0 z-40 border-b border-line/20 bg-surface/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <a href={`/${lang}/`} class="shrink-0" aria-label="Nicole Menchaca">
+      <Logo variant="inline" class="text-base text-ink sm:text-lg" />
+    </a>
+
+    <nav class="hidden items-center gap-10 lg:flex">
+      {links.map((link) => (
+        <a href={link.href} class="text-base uppercase tracking-[0.15em] text-ink-muted transition hover:text-ink">
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <LanguageSwitcher lang={lang} />
+      <button
+        id="menu-toggle"
+        aria-label="Menu"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line/40 lg:hidden"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="hidden flex-col gap-1 border-t border-line/20 px-4 py-3 lg:hidden">
+    {links.map((link) => (
+      <a href={link.href} class="rounded-md px-2 py-3 text-lg uppercase tracking-[0.1em] text-ink-muted hover:bg-line/10 hover:text-ink">
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+    menu?.classList.toggle('flex');
+  });
+  menu?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      menu.classList.remove('flex');
+    })
+  );
+</script>

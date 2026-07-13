@@ -1,0 +1,165 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { portfolioPhotos } from '@/lib/portfolio';
+import type { SiteCopy } from '@/content/types';
+
+interface Props {
+  copy: SiteCopy;
+}
+
+const { copy } = Astro.props;
+
+const fullImages = await Promise.all(
+  portfolioPhotos.map((photo) => getImage({ src: photo.src, width: 1800, format: 'webp' }))
+);
+
+const lightboxData = fullImages.map((img, i) => ({
+  src: img.src,
+  alt: portfolioPhotos[i]!.alt,
+}));
+---
+
+<section id="trabajo" class="py-20 sm:py-28">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="font-display text-4xl font-light sm:text-5xl">{copy.work.heading}</h2>
+      <p class="text-balance-pretty mt-3 text-base text-ink-muted sm:text-lg">{copy.work.subheading}</p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap justify-center gap-3" role="tablist" aria-label={copy.work.heading}>
+      <button
+        type="button"
+        class="filter-btn rounded-full border border-line/40 px-6 py-2.5 text-sm uppercase tracking-[0.15em] text-ink transition data-[active=true]:bg-ink data-[active=true]:text-surface"
+        data-filter="all"
+        data-active="true"
+      >
+        {copy.work.allLabel}
+      </button>
+      {copy.work.categories.map((cat) => (
+        <button
+          type="button"
+          class="filter-btn rounded-full border border-line/40 px-6 py-2.5 text-sm uppercase tracking-[0.15em] text-ink transition data-[active=true]:bg-ink data-[active=true]:text-surface"
+          data-filter={cat.id}
+          data-active="false"
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    <div id="gallery-grid" class="mt-10 columns-1 gap-4 sm:columns-2 lg:columns-3">
+      {portfolioPhotos.map((photo, i) => (
+        <button
+          type="button"
+          class="gallery-item mb-4 block w-full break-inside-avoid overflow-hidden rounded-sm"
+          data-category={photo.category}
+          data-index={i}
+          aria-label={photo.alt}
+        >
+          <Image
+            src={photo.src}
+            alt={photo.alt}
+            class="w-full object-cover transition duration-500 hover:scale-[1.03]"
+            widths={[320, 640, 960]}
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            loading={i < 4 ? 'eager' : 'lazy'}
+          />
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="lightbox-data" is:inline set:html={JSON.stringify(lightboxData)} />
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-graphite/95 p-4 backdrop-blur"
+  role="dialog"
+  aria-modal="true"
+>
+  <button id="lightbox-close" type="button" aria-label="Cerrar" class="absolute right-4 top-4 text-paper transition hover:text-mist">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-7 w-7">
+      <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+    </svg>
+  </button>
+  <button id="lightbox-prev" type="button" aria-label="Anterior" class="absolute left-2 top-1/2 -translate-y-1/2 p-3 text-paper transition hover:text-mist sm:left-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+  <img id="lightbox-image" src="" alt="" class="max-h-[85vh] max-w-[90vw] object-contain" />
+  <button id="lightbox-next" type="button" aria-label="Siguiente" class="absolute right-2 top-1/2 -translate-y-1/2 p-3 text-paper transition hover:text-mist sm:right-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
+      <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+</div>
+
+<script>
+  const items = Array.from(document.querySelectorAll<HTMLButtonElement>('.gallery-item'));
+  const filterBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.filter-btn'));
+  const dataEl = document.getElementById('lightbox-data');
+  const photos: { src: string; alt: string }[] = dataEl ? JSON.parse(dataEl.textContent || '[]') : [];
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+      filterBtns.forEach((b) => (b.dataset.active = String(b === btn)));
+      items.forEach((item) => {
+        const show = filter === 'all' || item.dataset.category === filter;
+        item.classList.toggle('hidden', !show);
+      });
+    });
+  });
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement | null;
+  let currentIndex = 0;
+
+  function visibleItems() {
+    return items.filter((item) => !item.classList.contains('hidden'));
+  }
+
+  function openLightbox(index: number) {
+    currentIndex = index;
+    const photo = photos[index];
+    if (!photo || !lightboxImage || !lightbox) return;
+    lightboxImage.src = photo.src;
+    lightboxImage.alt = photo.alt;
+    lightbox.classList.remove('hidden');
+    lightbox.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox?.classList.add('hidden');
+    lightbox?.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  function step(delta: number) {
+    const visible = visibleItems();
+    const indices = visible.map((item) => Number(item.dataset.index));
+    const pos = indices.indexOf(currentIndex);
+    const nextPos = (pos + delta + indices.length) % indices.length;
+    openLightbox(indices[nextPos]!);
+  }
+
+  items.forEach((item) => {
+    item.addEventListener('click', () => openLightbox(Number(item.dataset.index)));
+  });
+
+  document.getElementById('lightbox-close')?.addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-prev')?.addEventListener('click', () => step(-1));
+  document.getElementById('lightbox-next')?.addEventListener('click', () => step(1));
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (lightbox?.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
+  });
+</script>

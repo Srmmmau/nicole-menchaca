@@ -1,0 +1,35 @@
+---
+import { emailHref, instagramUrl, agencyUrl } from '@/lib/contact';
+import type { SiteCopy } from '@/content/types';
+
+interface Props {
+  copy: SiteCopy;
+}
+
+const { copy } = Astro.props;
+const email = import.meta.env.PUBLIC_CONTACT_EMAIL;
+const instagramHandle = import.meta.env.PUBLIC_INSTAGRAM_HANDLE;
+---
+
+<section id="contacto" class="py-24 sm:py-32">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="font-display text-4xl font-light sm:text-6xl">{copy.contact.heading}</h2>
+      <p class="text-balance-pretty mx-auto mt-4 max-w-md text-ink-muted">{copy.contact.body}</p>
+
+      <div class="mt-10 flex flex-col items-center gap-4">
+        <a href={emailHref()} class="font-display text-2xl text-ink transition hover:text-ink-muted sm:text-3xl">
+          {email}
+        </a>
+        <div class="mt-4 flex items-center gap-6 text-sm uppercase tracking-wide text-ink-subtle">
+          <a href={instagramUrl()} target="_blank" rel="noopener noreferrer" class="transition hover:text-ink">
+            {copy.contact.instagramLabel} · @{instagramHandle}
+          </a>
+          <a href={agencyUrl()} target="_blank" rel="noopener noreferrer" class="transition hover:text-ink">
+            {copy.contact.agencyLabel} · MOM
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

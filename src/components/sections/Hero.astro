@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import heroPhoto from '@/assets/portfolio/hero.jpg';
+import Logo from '@/components/ui/Logo.astro';
+import type { SiteCopy } from '@/content/types';
+
+interface Props {
+  copy: SiteCopy;
+}
+
+const { copy } = Astro.props;
+---
+
+<section class="relative flex min-h-dvh items-end overflow-hidden">
+  <Image
+    src={heroPhoto}
+    alt=""
+    class="absolute inset-0 h-full w-full object-cover"
+    widths={[640, 1024, 1600, 2000]}
+    sizes="100vw"
+    priority
+  />
+  <div class="absolute inset-0 bg-gradient-to-t from-graphite via-graphite/20 to-graphite/10"></div>
+
+  <div class="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-32 sm:px-6 sm:pb-24">
+    <h1>
+      <Logo variant="stacked" class="items-start text-[2.5rem] text-paper sm:text-[3rem] lg:text-[3.75rem]" />
+    </h1>
+    <p class="text-balance-pretty mt-6 max-w-md text-lg text-mist">{copy.hero.subtitle}</p>
+    <a href="#trabajo" class="mt-10 inline-flex items-center gap-2 text-sm uppercase tracking-wide text-paper transition hover:text-mist">
+      {copy.hero.scrollHint}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
+        <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
+  </div>
+</section>
