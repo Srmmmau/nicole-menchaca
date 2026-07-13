@@ -8,13 +8,13 @@ const { variant = 'stacked', class: className = '' } = Astro.props;
 ---
 
 {variant === 'stacked' ? (
-  <span class:list={['inline-flex flex-col font-display uppercase leading-none', className]}>
+  <span class:list={['inline-flex flex-col font-body uppercase leading-none', className]}>
     <span class="tracking-[0.2em]">Nicole</span>
     <span class="my-[0.35em] h-px w-[2.2em] bg-stone" aria-hidden="true" />
     <span class="tracking-[0.2em]">Menchaca</span>
   </span>
 ) : (
-  <span class:list={['inline-flex items-center gap-[0.6em] font-display uppercase leading-none', className]}>
+  <span class:list={['inline-flex items-center gap-[0.6em] font-body uppercase leading-none', className]}>
     <span class="tracking-[0.15em]">Nicole</span>
     <span class="h-px w-[1.1em] bg-stone" aria-hidden="true" />
     <span class="tracking-[0.15em]">Menchaca</span>

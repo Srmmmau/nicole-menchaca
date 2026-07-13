@@ -1,8 +1,12 @@
 @import 'tailwindcss';
 
-@import '@fontsource-variable/fraunces';
-@import '@fontsource-variable/fraunces/wght-italic.css';
-@import '@fontsource-variable/inter';
+@import '@fontsource/eb-garamond/400.css';
+@import '@fontsource/eb-garamond/400-italic.css';
+@import '@fontsource/eb-garamond/500.css';
+@import '@fontsource/cormorant-garamond/300.css';
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
 
 @theme {
   /* Brand palette approved with the logo — cold neutrals, intentionally monochrome. */
@@ -19,8 +23,8 @@
   --color-ink-subtle: var(--color-stone);
   --color-line: var(--color-stone);
 
-  --font-display: 'Fraunces Variable', 'Fraunces', serif;
-  --font-body: 'Inter Variable', 'Inter', sans-serif;
+  --font-display: 'Cormorant Garamond', 'EB Garamond', serif;
+  --font-body: 'EB Garamond', serif;
 }
 
 :root[data-theme='dark'] {
